@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.1/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.1/ScrollTrigger.min.js"></script>
+    <title>Title</title>
+    <style>
+        .flex {
+            align-items: center;
+            display: flex;
+            justify-content: center;
+        }
+
+        .scene {
+            background-color: #a29bfe;
+            color: black;
+            font: 800 100%/1.2 'Nunito', sans-serif;
+            height: 100vh;
+            max-height: 100vh;
+            overflow: hidden;
+        }
+
+        .header {
+            font-size: 6rem;
+            margin: 0 auto;
+            max-width: 80em;
+            position: relative;
+            text-align: center;
+            z-index: 1;
+        }
+
+        .confetti {
+            position: absolute;
+            user-select: none;
+            z-index: 0;
+        }
+
+        .confetti__item {
+            display: inline-block;
+            font-size: 1.5rem;
+            position: absolute;
+        }
+    </style>
+</head>
+<body>
+<section class="flex scene">
+    <h1 class="header">
+        <span>Powodzenia, Kasiu!</span>
+    </h1>
+    <div class="confetti"></div>
+</section>
+<script>
+    (function(){
+        const wrapper = document.querySelector(".confetti");
+        const isAnimationOk = window.matchMedia('(prefers-reduced-motion: no-preference)').matches;
+        const icons = [
+            "🎉",
+            "✨",
+            "💜",
+            "🖤",
+            "👸🏻",
+            "💻"
+        ];
+        const iconCount = 18;
+        var elements = [];
+
+        init();
+
+        function init() {
+            for (let i = 0; i < iconCount; i++) {
+                createIcon();
+            }
+
+            gsap.set(elements, {
+                transformOrigin: "50% 50%",
+                scale: 0
+            });
+        }
+
+        function createIcon(icon) {
+            if(icon === null || icon === undefined) {
+                icon = document.createElement("span");
+                icon.classList.add("confetti__item");
+                wrapper.appendChild(icon);
+                elements.push(icon);
+            }
+
+            icon.innerText = gsap.utils.random(icons);
+            if(isAnimationOk) animateIcon(icon);
+        }
+
+        function animateIcon(icon) {
+            let durationFall = gsap.utils.random(1.75, 2.5);
+            let durationFade = .3;
+            let delay = gsap.utils.random(0, .75);
+            let xDirection = gsap.utils.random(0, 1) > .5 ? 1 : -1;
+            let x = (gsap.utils.random(0, window.outerWidth / 4) + 100) * xDirection;
+            let tl = new gsap.timeline();
+
+            tl.to(icon, {
+                repeat: -1,
+                delay: delay,
+                keyframes: [{
+                    scale: 1,
+                    duration: .1
+                },
+                    {
+                        y: `random(${-window.outerHeight/4}, 0)`,
+                        ease: Back.easeOut.config(5),
+                        duration: durationFall
+                    },
+                    {
+                        x: (gsap.utils.random(0, window.outerWidth / 4) + 100) * xDirection,
+                        ease: "Power1.easeOut",
+                        duration: durationFall,
+                        delay: -durationFall
+                    },
+                    {
+                        opacity: 0,
+                        scale: 4,
+                        ease: "Power1.easeOut",
+                        duration: durationFade,
+                        delay: -durationFade
+                    }]
+            }, "<");
+        }
+    }());
+
+</script>
+</body>
+</html>
